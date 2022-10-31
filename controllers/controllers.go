@@ -12,7 +12,7 @@ func ExibeTodosAlunos(c *gin.Context) {
 
 	var alunos []models.Aluno
 
-	database.DB.Order("nome ASC").Find(&alunos)
+	database.DB.Order("nome").Find(&alunos)
 	c.JSON(http.StatusOK, alunos)
 
 }
@@ -36,20 +36,19 @@ func BuscaAlunoPorID(c *gin.Context) {
 
 }
 
-func Saudacao(c *gin.Context) {
-
-	nome := c.Params.ByName("nome")
-	c.JSON(200, gin.H{
-		"API diz:": "E ai " + nome + ", tudo beleza?",
-	})
-
-}
-
 func CriaNovoAluno(c *gin.Context) {
 
 	var aluno models.Aluno
 
 	if err := c.ShouldBindJSON(&aluno); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Mesage": err.Error()})
+
+		return
+	}
+
+	if err := models.ValidaDadosDeAluno(&aluno); err != nil {
+
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Mesage": err.Error()})
 
@@ -96,6 +95,13 @@ func EditaAluno(c *gin.Context) {
 
 	}
 
+	if err := models.ValidaDadosDeAluno(&aluno); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Mesage": err.Error()})
+
+		return
+	}
+
 	linhasAfetadas := database.DB.Model(&aluno).UpdateColumns(aluno).RowsAffected
 
 	if linhasAfetadas == 0 {
@@ -127,5 +133,14 @@ func BuscaAlunoPorCPF(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, aluno)
+
+}
+
+func Saudacoes(c *gin.Context) {
+
+	nome := c.Params.ByName("nome")
+
+	c.JSON(http.StatusOK, gin.H{
+		"Message": "Olá, " + nome + ". É um prazer tê-lo aqui."})
 
 }

@@ -144,3 +144,27 @@ func Saudacoes(c *gin.Context) {
 		"Message": "Olá, " + nome + ". É um prazer tê-lo aqui."})
 
 }
+
+func ExibePaginaIndex(c *gin.Context) {
+
+	var alunos []models.Aluno
+
+	database.DB.Order("nome").Find(&alunos)
+
+	c.HTML(http.StatusOK, "index.html", gin.H{
+		"alunos": alunos,
+	})
+
+}
+
+func RotaNaoEncontrada(c *gin.Context) {
+
+	c.HTML(http.StatusNotFound, "404.html", nil)
+
+}
+
+func RedirecionaPagina(c *gin.Context) {
+
+	c.Redirect(http.StatusFound, "/index")
+
+}

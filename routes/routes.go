@@ -9,6 +9,10 @@ func HandleRequests() {
 
 	r := gin.Default()
 
+	r.LoadHTMLGlob("templates/*")
+	r.Static("/assets", "./assets")
+	r.GET("/", controllers.RedirecionaPagina)
+	r.GET("/index", controllers.ExibePaginaIndex)
 	r.GET("/alunos", controllers.ExibeTodosAlunos)
 	r.GET("/alunos/:id", controllers.BuscaAlunoPorID)
 	r.GET("/:nome", controllers.Saudacoes)
@@ -16,6 +20,7 @@ func HandleRequests() {
 	r.DELETE("/alunos/:id", controllers.DeletaAluno)
 	r.PATCH("/alunos/:id", controllers.EditaAluno)
 	r.GET("/alunos/cpf/:cpf", controllers.BuscaAlunoPorCPF)
+	r.NoRoute(controllers.RotaNaoEncontrada)
 
 	r.Run() // listen and serve on localhost:8080
 
